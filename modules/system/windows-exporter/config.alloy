@@ -20,7 +20,9 @@ import.http "windows_exporter" {
 }
 
 // get the targets
-windows_exporter.local "targets" {}
+windows_exporter.local "targets" {
+
+}
 
 // scrape the targets
 windows_exporter.scrape "metrics" {

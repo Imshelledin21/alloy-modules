@@ -24,6 +24,21 @@ node_exporter.scrape "metrics" {
   ]
 }
 
+// write the metrics
+prometheus.remote_write "default" {
+  endpoint {
+    url = "YOUR_METRICS_ENDPOINT"
+
+    basic_auth {
+      username = "YOUR_TENANT_ID"
+      password = "YOUR_TOKEN"
+    }
+  }
+  external_labels {
+    bunit = env("BUNIT")
+  }
+}
+
 import.git "node_logs" {
   repository = "https://github.com/YOUR_ORG/REPO_NAME.git"
   revision   = "main"

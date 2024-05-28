@@ -9,6 +9,12 @@ import.git "node_exporter" {
   pull_frequency = "15m"
 }
 
+// or
+
+import.http "node_exporter" {
+  url = "https://DOMAIN.com/PATH/TO/metrics.alloy"
+}
+
 node_exporter.vm "targets" {}
 
 node_exporter.scrape "metrics" {
@@ -23,6 +29,13 @@ import.git "node_logs" {
   revision   = "main"
   path       = "modules/system/node-exporter/logs.alloy"
   pull_frequency = "15m" 
+}
+
+
+// or
+
+import.http "node_logs" {
+  url = "https://DOMAIN.com/PATH/TO/logs.alloy"
 }
 
 node_logs.journal "scrape" {

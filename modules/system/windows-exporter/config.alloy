@@ -1,0 +1,77 @@
+logging {
+	level = "info"
+}
+
+// ******************
+// Windows Metrics
+// ******************
+
+import.git "windows_exporter" {
+  repository = "https://github.com/YOUR_ORG/REPO_NAME.git"
+  revision = "main"
+  path = "modules/system/windows-exporter/metrics.alloy"
+  pull_frequency = "15m"
+}
+
+// get the targets
+windows_exporter.local "targets" {}
+
+// scrape the targets
+windows_exporter.scrape "metrics" {
+  targets = windows_exporter.local.targets.output
+  forward_to = [
+    prometheus.remote_write.default.receiver,
+  ]
+}
+
+// write the metrics
+prometheus.remote_write "default" {
+  endpoint {
+    url = "YOUR_METRICS_ENDPOINT"
+
+    basic_auth {
+      username = "YOUR_TENANT_ID"
+      password = "YOUR_TOKEN"
+    }
+  }
+  external_labels {
+    bunit = env("BUNIT")
+  }
+}
+
+// *****************
+// Windows Logs
+// *****************
+
+import.git "windows_logs" {
+  repository = "https://github.com/YOUR_ORG/REPO_NAME.git"
+  revision = "main"
+  path = "modules/system/windows-exporter/logs.alloy"
+  pull_frequency = "15m"
+}
+
+windows_logs.event_log "application" {
+  eventlog_name = "Application"
+  forward_to = [loki.write.default.receiver,]
+}
+
+windows_logs.event_log "system" {
+  eventlog_name = "System"
+  forward_to = [loki.write.default.receiver,]
+}
+
+windows_logs.app_logs {
+  path_targets = "C:\\Path\\TO\\YOUR\\*.logs"
+  forward_to = [loki.write.default.receiver,]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "YOUR_LOGS_ENDPOINT"
+
+    basic_auth {
+      username = "YOUR_TENANT_ID"
+      password = "YOUR_TOKEN"
+    }
+  }
+}

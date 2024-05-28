@@ -1,0 +1,49 @@
+logging {
+  level = "info"
+}
+
+import.git "node_exporter" {
+  repository = "https://github.com/YOUR_ORG/REPO_NAME.git"
+  revision   = "main"
+  path       = "modules/system/node-exporter/metrics.alloy"
+  pull_frequency = "15m"
+}
+
+node_exporter.vm "targets" {}
+
+node_exporter.scrape "metrics" {
+  targets = node_exporter.vm.targets.output
+  forward_to = [
+    prometheus.remote_write.default.receiver,
+  ]
+}
+
+import.git "node_logs" {
+  repository = "https://github.com/YOUR_ORG/REPO_NAME.git"
+  revision   = "main"
+  path       = "modules/system/node-exporter/logs.alloy"
+  pull_frequency = "15m" 
+}
+
+node_logs.journal "scrape" {
+  forward_to = [
+    loki.write.default.receiver,
+  ]
+}
+
+node_logs.file_logs "scrape" {
+  forward_to = [
+    loki.write.default.receiver,
+  ]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "YOUR_LOGS_ENDPOINT"
+
+    basic_auth {
+      username = "YOUR_TENANT_ID"
+      password = "YOUR_TOKEN"
+    }
+  }
+}

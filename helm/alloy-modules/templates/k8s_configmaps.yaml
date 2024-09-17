@@ -1,0 +1,14 @@
+# chart/templates/configmaps.yaml
+{{- if .Values.alloy_modules.kubernetes.enabled }}
+  {{- range $path, $_ :=  .Files.Glob  "configmaps/kubernetes-*" }}
+    {{- $configMapName := $path | trimPrefix "configmaps/" | trimSuffix ".alloy" }}
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: {{ $configMapName }}
+    data:
+      {{ $path | trimPrefix "configmaps/" }}: |-
+    {{ $.Files.Get $path| indent 4 }}
+    ---
+  {{ end }}
+{{ end }}

@@ -1,0 +1,16 @@
+# chart/templates/configmaps.yaml
+{{- with .Values.alloy_modules.databases }}
+{{- if .enabled }}
+{{- range $path, $_ :=  .Files.Glob  "configmaps/databases-*" }}
+{{- $configMapName := $path | trimPrefix "configmaps/" | trimSuffix ".alloy" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $configMapName }}
+data:
+{{ $path | trimPrefix "configmaps/" }}: |-
+{{ $.Files.Get $path| indent 4 }}
+---
+  {{ end }}
+{{ end }}
+{{ end }}

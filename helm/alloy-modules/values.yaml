@@ -1,0 +1,10 @@
+alloy_modules:
+  kubernetes:
+    enabled: false
+  databases:
+    enabled: true
+    timeseries:
+      loki: true
+      mimir: true
+      tempo: true
+      pyroscope: true

@@ -24,6 +24,9 @@ clean:
 # reinstall the node_modules and start with a fresh node build
 reinstall: clean install
 
+build:
+	@./tools/create-helm-config-files.sh
+
 ####################################################################
 #                           Linting                                #
 ####################################################################
